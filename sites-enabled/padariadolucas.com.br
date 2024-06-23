@@ -1,0 +1,50 @@
+server {
+        listen 80;
+        listen [::]:80;
+
+        server_name padariadolucas.com.br www.padariadolucas.com.br;
+        return 301 https://padariadolucas.com.br$request_uri;
+
+}
+
+server {
+
+        listen 443 ssl http2;
+        listen [::]:443 ssl http2;
+
+        include /etc/nginx/snippets/self-signed.conf;
+        include /etc/nginx/snippets/ssl-params.conf;
+
+        server_name padariadolucas.com.br www.padariadolucas.com.br;
+        root /var/www/padariadolucas.com.br/html/;
+        index index.html index.htm;
+
+        access_log /var/www/padariadolucas.com.br/logs/nginx_access.log;
+        error_log /var/www/padariadolucas.com.br/logs/nginx_error.log;
+
+        location / {
+           if (-f /etc/nginx/maintenance/$server_name){
+           return 503;
+           }
+        }
+        error_page 404 /404.html;
+        location = /404.html {
+                #try_files $uri $uri/ =404;
+                root /var/www/padariadolucas.com.br/status-pages/;
+                internal;
+        }
+
+        error_page 503 /503.html;
+        location /503.html{
+                root /var/www/padariadolucas.com.br/status-pages/;
+                internal;
+        }
+
+
+        # server_name informaticagp.com.br;
+        # auth_basic "Restricted Content";
+        # auth_basic_user_file /etc/nginx/.htpasswd;
+}
+
+
+

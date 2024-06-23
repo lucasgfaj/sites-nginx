@@ -1,0 +1,31 @@
+server {
+        listen 80;
+        listen [::]:80;
+
+        server_name padariadolucas.com.br www.padariadolucas.com.br;
+        root /var/www/padariadolucas.com.br/html/;
+        index index.html index.htm index.nginx-debian.html;
+
+        access_log /var/www/padariadolucas.com.br/logs/nginx_access.log;
+        error_log /var/www/padariadolucas.com.br/logs/nginx_error.log;
+
+        location / {
+           if (-f /etc/nginx/maintenance/$server_name) {
+                return 503;
+           }
+        }
+
+        error_page 404 /404.html;
+        location = /404.html {
+                #try_files $uri $uri/ =404;
+                root /var/www/padariadolucas.com.br/status-pages/;
+                internal;
+        }
+
+        error_page 503 /503.html;
+        location /503.html{
+                root /var/www/padariadolucas.com.br/status-pages/;
+                internal;
+
+        }
+}
